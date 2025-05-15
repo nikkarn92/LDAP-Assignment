@@ -1,1 +1,5 @@
+com\nikhilkarn\authwrapper\LoggerUtilTest.class
+com\nikhilkarn\authwrapper\OtpServiceTest.class
+com\nikhilkarn\authwrapper\LdapServiceTest.class
+com\nikhilkarn\authwrapper\AuthControllerTest.class
 com\nikhilkarn\authwrapper\AuthWrapperApplicationTests.class

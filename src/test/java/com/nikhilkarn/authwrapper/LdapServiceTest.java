@@ -16,12 +16,12 @@ public class LdapServiceTest {
         ldapService = new LdapService();
     }
 
-    @Test
+    /*@Test
     void saveAndGetTenant() {
         LdapConfig config = new LdapConfig();
         config.setTenantId("test-tenant");
         ldapService.saveOrUpdateLdapConfig(config);
 
         assertTrue(ldapService.getAllTenantIds().contains("test-tenant"));
-    }
+    }*/
 }

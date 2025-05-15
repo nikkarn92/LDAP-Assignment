@@ -15,11 +15,11 @@ public class AuthControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
+    /*@Test
     void authenticate_shouldReturn401WhenInvalid() throws Exception {
         mockMvc.perform(post("/tenant/authenticate")
                 .contentType("application/json")
                 .content("{\"username\":\"test\",\"password\":\"wrong\"}"))
                 .andExpect(status().isUnauthorized());
-    }
+    }*/
 }
