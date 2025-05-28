@@ -1,31 +1,39 @@
+/**
+ * POC Project for LDAP AUTH WRAPPER
+ * Author: Nikhil Karn
+ */
+
 package com.nikhilkarn.authwrapper.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "OTP verification request containing email and the one-time password")
+/**
+ * DTO for OTP verification requests.
+ */
 public class OtpRequest {
 
-    @Schema(description = "Email used to receive the OTP", example = "john.doe@example.com")
-    private String email;
+    @NotBlank(message = "Username must not be empty")
+    private String username;
 
-    @Schema(description = "One-Time Password sent to email", example = "827364")
+    @NotBlank(message = "OTP must not be empty")
     private String otp;
 
-    // Constructors
+    private String ipAddress;
+
     public OtpRequest() {}
 
-    public OtpRequest(String email, String otp) {
-        this.email = email;
+    public OtpRequest(String username, String otp, String ipAddress) {
+        this.username = username;
         this.otp = otp;
+        this.ipAddress = ipAddress;
     }
 
-    // Getters & Setters
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getOtp() {
@@ -34,5 +42,13 @@ public class OtpRequest {
 
     public void setOtp(String otp) {
         this.otp = otp;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

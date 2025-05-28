@@ -1,5 +1,11 @@
-com\nikhilkarn\authwrapper\LoggerUtilTest.class
-com\nikhilkarn\authwrapper\OtpServiceTest.class
-com\nikhilkarn\authwrapper\LdapServiceTest.class
+com\nikhilkarn\authwrapper\SecurityConfigTest.class
 com\nikhilkarn\authwrapper\AuthControllerTest.class
-com\nikhilkarn\authwrapper\AuthWrapperApplicationTests.class
+com\nikhilkarn\authwrapper\ExternalOtpApiProviderTest.class
+com\nikhilkarn\authwrapper\LdapAuthServiceTest.class
+com\nikhilkarn\authwrapper\OtpConfigTest.class
+com\nikhilkarn\authwrapper\RedisOtpProviderTest.class
+com\nikhilkarn\authwrapper\GlobalExceptionHandlerTest.class
+com\nikhilkarn\authwrapper\LdapConfigTest.class
+com\nikhilkarn\authwrapper\TestUtils.class
+com\nikhilkarn\authwrapper\GlobalExceptionHandlerTest$DummyViolation.class
+com\nikhilkarn\authwrapper\LoginAuditServiceTest.class

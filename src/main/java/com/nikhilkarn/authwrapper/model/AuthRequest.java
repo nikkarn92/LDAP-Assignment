@@ -1,25 +1,33 @@
+/**
+ * POC Project for LDAP AUTH WRAPPER
+ * Author: Nikhil Karn
+ */
+
 package com.nikhilkarn.authwrapper.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "Authentication request containing user credentials")
+/**
+ * DTO for handling authentication requests.
+ */
 public class AuthRequest {
 
-    @Schema(description = "Username to authenticate", example = "john.doe")
+    @NotBlank(message = "Username must not be empty")
     private String username;
 
-    @Schema(description = "User's password", example = "Secret@123")
+    @NotBlank(message = "Password must not be empty")
     private String password;
 
-    // Constructors
+    private String ipAddress;
+
     public AuthRequest() {}
 
-    public AuthRequest(String username, String password) {
+    public AuthRequest(String username, String password, String ipAddress) {
         this.username = username;
         this.password = password;
+        this.ipAddress = ipAddress;
     }
 
-    // Getters & Setters
     public String getUsername() {
         return username;
     }
@@ -34,5 +42,13 @@ public class AuthRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

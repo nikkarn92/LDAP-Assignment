@@ -1,66 +1,57 @@
+/**
+ * POC Project for LDAP AUTH WRAPPER
+ * Author: Nikhil Karn
+ */
+
 package com.nikhilkarn.authwrapper.controller;
 
 import com.nikhilkarn.authwrapper.model.AuthRequest;
+import com.nikhilkarn.authwrapper.model.AuthResponse;
 import com.nikhilkarn.authwrapper.model.OtpRequest;
-import com.nikhilkarn.authwrapper.service.LdapService;
+import com.nikhilkarn.authwrapper.model.ApiResponse;
+import com.nikhilkarn.authwrapper.service.LdapAuthService;
 import com.nikhilkarn.authwrapper.service.OtpService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Handles authentication and OTP verification requests.
+ * REST Controller exposing endpoints for LDAP authentication and OTP verification.
  */
 @RestController
-@RequestMapping("/{tenantId}")
-@Tag(name = "Authentication API", description = "LDAP + OTP-based MFA endpoints")
+@RequestMapping("/api")
 public class AuthController {
 
     @Autowired
-    private LdapService ldapService;
+    private LdapAuthService ldapAuthService;
 
     @Autowired
     private OtpService otpService;
 
-    @SecurityRequirement(name = "apiKeyAuth")
-    @SecurityRequirement(name = "bearerAuth")
+    /**
+     * Step 1: Authenticate using LDAP and trigger OTP.
+     * @param request AuthRequest containing username and password
+     * @return AuthResponse with session ID or failure
+     */
     @PostMapping("/authenticate")
-    @Operation(summary = "Authenticate user and send OTP to email")
-    public ResponseEntity<String> authenticate(
-            @PathVariable String tenantId,
-            @RequestBody AuthRequest request) {
-
-        boolean isAuthenticated = ldapService.authenticate(tenantId, request.getUsername(), request.getPassword());
-
-        if (!isAuthenticated) {
-            return ResponseEntity.status(401).body("LDAP authentication failed");
-        }
-
-        String userEmail = ldapService.fetchEmail(tenantId, request.getUsername());
-        String otp = otpService.generateOtp(userEmail);
-
-        otpService.sendOtpEmail(userEmail, otp);
-
-        return ResponseEntity.ok("OTP sent to registered email.");
+    public ResponseEntity<ApiResponse> authenticate(@RequestBody AuthRequest request) {
+        AuthResponse auth = ldapAuthService.authenticate(request.getUsername(), request.getPassword());
+        otpService.sendOtp(auth.getEmail());  // Send OTP to LDAP email
+        return ResponseEntity.ok(new ApiResponse(true, auth.getSessionId()));
     }
 
-    @SecurityRequirement(name = "apiKeyAuth")
-    @SecurityRequirement(name = "bearerAuth")
+    /**
+     * Step 2: Verify OTP sent to email or mobile.
+     * @param otpRequest OtpRequest with username and OTP code
+     * @return ApiResponse indicating verification result
+     */
     @PostMapping("/verify-otp")
-    @Operation(summary = "Verify the OTP to complete login")
-    public ResponseEntity<String> verifyOtp(
-            @PathVariable String tenantId,
-            @RequestBody OtpRequest request) {
-
-        boolean valid = otpService.verifyOtp(request.getEmail(), request.getOtp());
-
-        if (!valid) {
-            return ResponseEntity.status(403).body("Invalid or expired OTP");
+    public ResponseEntity<ApiResponse> verifyOtp(@RequestBody OtpRequest otpRequest) {
+        boolean valid = otpService.verifyOtp(otpRequest.getUsername(), otpRequest.getOtp());
+        if (valid) {
+            return ResponseEntity.ok(new ApiResponse(true, null));
+        } else {
+            return ResponseEntity.status(401).body(new ApiResponse(false, null));
         }
-
-        return ResponseEntity.ok("Authentication successful!");
     }
 }

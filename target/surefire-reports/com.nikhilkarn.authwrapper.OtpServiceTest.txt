@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.nikhilkarn.authwrapper.OtpServiceTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.nikhilkarn.authwrapper.OtpServiceTest
