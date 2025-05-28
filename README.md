@@ -26,12 +26,6 @@ This is a **client-installable, platform-independent** Spring Boot wrapper that 
 java -jar target/ldap-auth-wrapper.war
 ```
 
-### Option 2: Run with Docker
-```bash
-docker build -t ldap-auth-wrapper .
-docker run -p 8080:8080 ldap-auth-wrapper
-```
-
 ---
 
 ## 🧪 Sample API Usage
