@@ -4,9 +4,11 @@ C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrappe
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\config\SwaggerConfig.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\controller\AuthController.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\exception\GlobalExceptionHandler.java
+C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\exception\UserNotFoundException.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\LdapAuthWrapperApplication.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\model\ApiResponse.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\model\AuthRequest.java
+C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\model\AuthResponse.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\model\OtpRequest.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\provider\ExternalOtpApiProvider.java
 C:\Users\nikka\Downloads\LDAP-Assignment\src\main\java\com\nikhilkarn\authwrapper\provider\OtpProvider.java

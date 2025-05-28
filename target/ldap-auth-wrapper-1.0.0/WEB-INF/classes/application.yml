@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+# OTP API placeholder config
+otp:
+  api:
+    base-url: https://mock-otp-provider.com/api/send-otp # or your actual endpoint
+
+# LDAP Configuration
+ldap:
+  urls:
+    - ldap://ldap.forumsys.com:389
+  base-dn: dc=example,dc=com
+  bind-dn: cn=read-only-admin,dc=example,dc=com
+  bind-password: password
+  user-search-filter: (uid={username})
+
+
+# Redis Configuration
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  mail:
+    host: smtp.example.com
+    port: 587
+    username: user@example.com
+    password: yourpassword
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

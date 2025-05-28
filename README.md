@@ -79,7 +79,7 @@ otp:
 ## 🧠 Diagrams
 
 ### Class Diagram
-![Authentication Flow](docs/class_diagram.png)
+![Class Diagram Flow](docs/class_diagram.png)
 
 ### Authentication & MFA Flow
 ![Authentication Flow](docs/auth_flow.png)
@@ -92,6 +92,7 @@ otp:
 ## 📘 Swagger Docs
 
 📘 Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+![Swagger Diagram](docs/swagger.png)
 
 ---
 
@@ -145,7 +146,6 @@ src/main/java/com/nikhilkarn/authwrapper
 | Account Lockout             | ✅ Done     |
 | CI/CD Integration           | 🟡 Planned  |
 | SMS MFA via external API    | 🟡 Planned  |
-| Admin Dashboard             | 🔜 Future   |
 
 ---
 
@@ -163,5 +163,4 @@ src/main/java/com/nikhilkarn/authwrapper
 
 If you'd like to extend this project or need consulting on IAM and security implementations:
 
-**Email:** nikhil.karn@yourdomain.com  
-**LinkedIn:** [linkedin.com/in/nikhilkarn](#)
+**Email:** nik.karn92@gmail.com

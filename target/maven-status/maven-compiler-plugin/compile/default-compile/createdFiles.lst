@@ -10,9 +10,11 @@ com\nikhilkarn\authwrapper\service\LdapAuthService.class
 com\nikhilkarn\authwrapper\service\RateLimitService.class
 com\nikhilkarn\authwrapper\exception\GlobalExceptionHandler.class
 com\nikhilkarn\authwrapper\config\OtpConfig.class
+com\nikhilkarn\authwrapper\exception\UserNotFoundException.class
 com\nikhilkarn\authwrapper\model\ApiResponse.class
 com\nikhilkarn\authwrapper\service\LoginAuditService.class
 com\nikhilkarn\authwrapper\provider\RedisOtpProvider.class
 com\nikhilkarn\authwrapper\config\SwaggerConfig.class
 com\nikhilkarn\authwrapper\service\OtpService.class
+com\nikhilkarn\authwrapper\model\AuthResponse.class
 com\nikhilkarn\authwrapper\provider\OtpProvider.class

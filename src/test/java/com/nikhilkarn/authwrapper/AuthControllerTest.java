@@ -42,7 +42,7 @@ public class AuthControllerTest {
         request.setUsername("jdoe");
         request.setPassword("password123");
 
-        when(ldapAuthService.authenticate("jdoe", "password123")).thenReturn("session-xyz");
+        when(ldapAuthService.authenticate("jdoe", "password123")).thenReturn(null);
 
         ResponseEntity<ApiResponse> response = authController.authenticate(request);
 
