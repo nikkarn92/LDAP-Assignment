@@ -79,13 +79,13 @@ otp:
 ## 🧠 Diagrams
 
 ### Class Diagram
-![Authentication Flow](/class_diagram.png)
+![Authentication Flow](docs/class_diagram.png)
 
 ### Authentication & MFA Flow
-![Authentication Flow](/auth_flow.png)
+![Authentication Flow](docs/auth_flow.png)
 
 ### Advanced Flow – MFA + Rate Limiting + Lockout
-![MFA Security Flow](/mfa_security_flow.png)
+![MFA Security Flow](docs/mfa_security_flow.png)
 
 ---
 
