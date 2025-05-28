@@ -99,36 +99,45 @@ otp:
 
 ```
 src/main/java/com/nikhilkarn/authwrapper
-├── config/
-│   ├── LdapConfig.java
-│   ├── OtpConfig.java
-│   └── SecurityConfig.java
-│
-├── controller/
-│   └── AuthController.java
-│
-├── exception/
-│   ├── GlobalExceptionHandler.java
-│   └── UserNotFoundException.java
-│
-├── model/
-│   ├── AuthRequest.java
-│   ├── AuthResponse.java
-│   ├── OtpRequest.java
-│   └── ApiResponse.java
-│
-├── provider/
-│   ├── OtpProvider.java
-│   ├── RedisOtpProvider.java
-│   └── ExternalOtpApiProvider.java
-│
-├── service/
-│   ├── LdapAuthService.java
-│   ├── OtpService.java
-│   ├── RateLimitService.java
-│   └── LoginAuditService.java
-│
-└── LdapAuthWrapperApplication.java
+            │   LdapAuthWrapperApplication.java
+            │
+            ├───config
+            │       LdapConfig.java
+            │       OtpConfig.java
+            │       SecurityConfig.java
+            │       SwaggerConfig.java
+            │
+            ├───controller
+            │       AuthController.java
+            │
+            ├───exception
+            │       GlobalExceptionHandler.java
+            │       UserNotFoundException.java
+            │
+            ├───model
+            │       ApiResponse.java
+            │       AuthRequest.java
+            │       AuthResponse.java
+            │       JwtTokenResponse.java
+            │       MfaOtpKeyResponse.java
+            │       MfaOtpVerifyRequest.java
+            │       MfaSessionResponse.java
+            │       OtpRequest.java
+            │
+            ├───provider
+            │       ExternalOtpApiProvider.java
+            │       OtpProvider.java
+            │       RedisOtpProvider.java
+            │
+            ├───service
+            │       LdapAuthService.java
+            │       LoginAuditService.java
+            │       OtpService.java
+            │       RateLimitService.java
+            │
+            └───util
+                    JwtUtil.java
+
 ```
 
 ---
@@ -356,3 +365,102 @@ OWASP Dependency Check, SonarQube, and GitHub Dependabot.
 
 **Q5: What makes the codebase easy to maintain and extend?**  
 Modular design, interface-driven services, documented configs, and high test coverage.
+
+
+---
+
+## 🧪 Demo Client (Java Console)
+
+This sample Java class demonstrates how to authenticate with LDAP and verify MFA OTP end-to-end using REST APIs exposed by this wrapper.
+
+### 🔧 Usage
+- Make sure the Spring Boot wrapper app is running at `http://localhost:8989`
+- Use a test LDAP user (like `einstein/password`) configured in your directory
+- Enter the OTP received in your email (based on the configured mock or real email service)
+
+### 📄 LdapMfaClient.java
+
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+public class LdapMfaClient {
+
+    private static final String BASE_URL = "http://localhost:8080/api";
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        String otpKey = authenticateAndGetOtpKey(username, password);
+        if (otpKey == null) {
+            System.err.println("Authentication failed or OTP not sent.");
+            return;
+        }
+
+        System.out.print("Enter OTP received in email: ");
+        String otp = scanner.nextLine();
+
+        String jwtToken = verifyOtpAndGetJwt(username, otpKey, otp);
+        if (jwtToken != null) {
+            System.out.println("✅ MFA Success! JWT Token: " + jwtToken);
+        } else {
+            System.err.println("OTP verification failed.");
+        }
+    }
+
+    private static String authenticateAndGetOtpKey(String username, String password) throws Exception {
+        URL url = new URL(BASE_URL + "/authenticate-mfa");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setRequestProperty("Content-Type", "application/json");
+
+        String json = String.format("{\\\"username\\\":\\\"%s\\\", \\\"password\\\":\\\"%s\\\"}", username, password);
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(json.getBytes(StandardCharsets.UTF_8));
+        }
+
+        if (conn.getResponseCode() == 200) {
+            InputStream is = conn.getInputStream();
+            String response = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            return mapper.readTree(response).get("otpKey").asText();
+        }
+
+        return null;
+    }
+
+    private static String verifyOtpAndGetJwt(String username, String otpKey, String otp) throws Exception {
+        URL url = new URL(BASE_URL + "/verify-otp-mfa");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setRequestProperty("Content-Type", "application/json");
+
+        String json = String.format("{\\\"username\\\":\\\"%s\\\", \\\"otpKey\\\":\\\"%s\\\", \\\"otp\\\":\\\"%s\\\"}",
+                username, otpKey, otp);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(json.getBytes(StandardCharsets.UTF_8));
+        }
+
+        if (conn.getResponseCode() == 200) {
+            InputStream is = conn.getInputStream();
+            String response = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            return mapper.readTree(response).get("sessionToken").asText();
+        }
+
+        return null;
+    }
+}

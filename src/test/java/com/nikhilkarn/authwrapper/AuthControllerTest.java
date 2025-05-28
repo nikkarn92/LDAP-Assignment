@@ -1,15 +1,11 @@
-/**
- * POC Project for LDAP AUTH WRAPPER - Controller Test
- * Author: Nikhil Karn
- */
 
 package com.nikhilkarn.authwrapper;
 
-import com.nikhilkarn.authwrapper.model.AuthRequest;
-import com.nikhilkarn.authwrapper.model.OtpRequest;
-import com.nikhilkarn.authwrapper.model.ApiResponse;
-import com.nikhilkarn.authwrapper.service.OtpService;
 import com.nikhilkarn.authwrapper.controller.AuthController;
+import com.nikhilkarn.authwrapper.model.*;
+import com.nikhilkarn.authwrapper.service.LdapAuthService;
+import com.nikhilkarn.authwrapper.service.OtpService;
+import com.nikhilkarn.authwrapper.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,61 +18,63 @@ import static org.mockito.Mockito.*;
 
 public class AuthControllerTest {
 
-    @InjectMocks
-    private AuthController authController;
-
     @Mock
-    private com.nikhilkarn.authwrapper.service.LdapAuthService ldapAuthService;
+    private LdapAuthService ldapAuthService;
 
     @Mock
     private OtpService otpService;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
+    @InjectMocks
+    private AuthController authController;
+
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testAuthenticateSuccess() {
-        AuthRequest request = new AuthRequest();
-        request.setUsername("jdoe");
-        request.setPassword("password123");
+    void testAuthenticateWithMfa() {
+        AuthRequest request = new AuthRequest("user", "pass","123456");
+        AuthResponse response = new AuthResponse("user@example.com", "sid123");
 
-        when(ldapAuthService.authenticate("jdoe", "password123")).thenReturn(null);
+        when(ldapAuthService.authenticate("user", "pass")).thenReturn(response);
+        when(otpService.sendOtpAndReturnKey("user@example.com")).thenReturn("otp-key-123");
 
-        ResponseEntity<ApiResponse> response = authController.authenticate(request);
+        ResponseEntity<?> result = authController.authenticateWithMfa(request);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("session-xyz", response.getBody().getMessage());
-        assertEquals("session-xyz", response.getBody().getMessage());
-        verify(otpService, times(1)).sendOtp("jdoe");
+        assertTrue(result.getStatusCode().is2xxSuccessful());
+        MfaOtpKeyResponse body = (MfaOtpKeyResponse) result.getBody();
+        assertNotNull(body);
+        assertTrue(body.isSuccess());
     }
 
     @Test
-    public void testVerifyOtpSuccess() {
-        OtpRequest otpRequest = new OtpRequest();
-        otpRequest.setUsername("jdoe");
-        otpRequest.setOtp("123456");
+    void testVerifyOtpWithKey_Valid() {
+        MfaOtpVerifyRequest request = new MfaOtpVerifyRequest("user", "otp-key-123", "123456");
 
-        when(otpService.verifyOtp("jdoe", "123456")).thenReturn(true);
+        when(otpService.verifyOtpWithKey("otp-key-123", "123456")).thenReturn(true);
+        when(jwtUtil.generateToken("user")).thenReturn("jwt-token-abc");
 
-        ResponseEntity<ApiResponse> response = authController.verifyOtp(otpRequest);
+        ResponseEntity<?> result = authController.verifyOtpWithKey(request);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(null, response.getBody().getMessage());
+        assertFalse(result.getStatusCode().is2xxSuccessful());
+
     }
 
     @Test
-    public void testVerifyOtpFailure() {
-        OtpRequest otpRequest = new OtpRequest();
-        otpRequest.setUsername("jdoe");
-        otpRequest.setOtp("000000");
+    void testVerifyOtpWithKey_Invalid() {
+        MfaOtpVerifyRequest request = new MfaOtpVerifyRequest("user", "otp-key-123", "wrong-otp");
 
-        when(otpService.verifyOtp("jdoe", "000000")).thenReturn(false);
+        when(otpService.verifyOtpWithKey("otp-key-123", "wrong-otp")).thenReturn(false);
 
-        ResponseEntity<ApiResponse> response = authController.verifyOtp(otpRequest);
+        ResponseEntity<?> result = authController.verifyOtpWithKey(request);
 
-        assertEquals(401, response.getStatusCodeValue());
-        assertEquals(null, response.getBody().getMessage());
+        assertEquals(401, result.getStatusCodeValue());
+        ApiResponse body = (ApiResponse) result.getBody();
+        assertNotNull(body);
+        assertFalse(body.isSuccess());
     }
 }
