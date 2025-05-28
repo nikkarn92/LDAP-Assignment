@@ -152,8 +152,6 @@ src/main/java/com/nikhilkarn/authwrapper
 | Redis OTP backend           | ✅ Done     |
 | Swagger + JUnit             | ✅ Done     |
 | Account Lockout             | ✅ Done     |
-| CI/CD Integration           | 🟡 Planned  |
-| SMS MFA via external API    | 🟡 Planned  |
 
 ---
 
